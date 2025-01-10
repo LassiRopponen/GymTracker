@@ -1,0 +1,15 @@
+name:"chin-up"
+primaryMuscles:["lats"]
+secondaryMuscles:["biceps"]
+type:"compound"
+end
+name:"tricep pushdown"
+primaryMuscles:["triceps"]
+secondaryMuscles:[""]
+type:"isolation"
+end
+name:"bench press"
+primaryMuscles:["chest"]
+secondaryMuscles:["front delts","triceps"]
+type:"compound"
+end

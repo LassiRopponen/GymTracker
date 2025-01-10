@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Locale;
+import java.io.PrintWriter;
 
 public class FileHandler {
     public <T> ArrayList<T> parseFile(String fileName, Class<T> classForParsing) {
@@ -51,7 +52,7 @@ public class FileHandler {
             }
         }
         catch(Exception e) {
-            System.out.println("Unable to read file: " + e);
+            System.err.println("Unable to read file: " + e);
         }
 
         return parsedObjects;
@@ -80,7 +81,14 @@ public class FileHandler {
             writer.newLine();
         }
         catch(Exception e) {
-            System.out.println("Unable to write to file: " + e);
+            System.err.println("Unable to write to file: " + e);
+        }
+    }
+
+    public void clearFile(String fileName) {
+        try (PrintWriter clearer = new PrintWriter(fileName)) {}
+        catch (Exception e) {
+            System.err.println("Unable to clear file: " + e);
         }
     }
 
