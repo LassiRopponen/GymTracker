@@ -91,6 +91,38 @@ public class App {
                         data.deleteLastSet();
                     }
                 }
+                else if (input.length == 3 && input[0].equals("modify")) {
+                    if (input[1].equals("exercise")) {
+                        if (input[2].equals("name")) {
+                            System.out.print("Exercise to modify: ");
+                            String oldExercise = inputReader.nextLine();
+                            System.out.print("New name: ");
+                            String newName = inputReader.nextLine();
+                            data.modifyExerciseName(oldExercise, newName);
+                        }
+                        else if (input[2].equals("primary")) {
+                            System.out.print("Exercise to modify: ");
+                            String oldExercise = inputReader.nextLine();
+                            System.out.print("New muscles: ");
+                            String[] newMuscles = inputReader.nextLine().split(", ");
+                            data.modifyExercisePrimaryMuscles(oldExercise, newMuscles);
+                        }
+                        else if (input[2].equals("secondary")) {
+                            System.out.print("Exercise to modify: ");
+                            String oldExercise = inputReader.nextLine();
+                            System.out.print("New muscles: ");
+                            String[] newMuscles = inputReader.nextLine().split(", ");
+                            data.modifyExerciseSecondaryMuscles(oldExercise, newMuscles);
+                        }
+                        else if (input[2].equals("type")) {
+                            System.out.print("Exercise to modify: ");
+                            String oldExercise = inputReader.nextLine();
+                            System.out.print("New type: ");
+                            String newType = inputReader.nextLine();
+                            data.modifyExerciseType(oldExercise, newType);
+                        }
+                    }
+                }
                 else {
                     System.out.println("Incorrect command.");
                 }
@@ -136,7 +168,6 @@ public class App {
         catch(Exception e) {
             System.out.println("Incorrect format for set.");
             return null;
-        }
-        
+        }   
     }
 }

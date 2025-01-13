@@ -2,6 +2,7 @@ package gymtracker;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,11 +22,21 @@ public class Data {
     }
 
     public void addExercise(Exercise newExercise) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(newExercise.name)).findAny();
+        if (result.isPresent()) {
+            System.out.println("Exercise with given name already exists.");
+            return;
+        }
         exerciseList.add(newExercise);
         files.writeToFile(EXERCISE_PATH, newExercise);
     }
 
     public void addSet(Set newSet) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(newSet.exercise)).findAny();
+        if (result.isPresent()) {
+            System.out.println("No exercise with given name.");
+            return;
+        }
         setList.add(newSet);
         files.writeToFile(SET_PATH, newSet);
     }
@@ -108,5 +119,70 @@ public class Data {
     public void clearSets() {
         setList.clear();
         files.clearFile(SET_PATH);
+    }
+
+    public void modifyExerciseName(String oldName, String newName) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(oldName)).findAny();
+        if (!result.isPresent()) {
+            System.out.println("No such exercise.");
+            return;
+        }
+        Exercise exerciseToModify = result.get();
+        exerciseToModify.name = newName;
+        for (Set set : setList) {
+            if (set.exercise.equals(oldName)) {
+                set.exercise = newName;
+            }
+        }
+        files.clearFile(EXERCISE_PATH);
+        files.clearFile(SET_PATH);
+        for (Exercise exercise : exerciseList) {
+            files.writeToFile(EXERCISE_PATH, exercise);
+        }
+        for (Set set : setList) {
+            files.writeToFile(SET_PATH, set);
+        }
+    }
+
+    public void modifyExercisePrimaryMuscles(String name, String[] newMuscles) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        if (!result.isPresent()) {
+            System.out.println("No such exercise.");
+            return;
+        }
+        Exercise exerciseToModify = result.get();
+        exerciseToModify.primaryMuscles = new ArrayList<>(Arrays.asList(newMuscles));
+        files.clearFile(EXERCISE_PATH);
+        for (Exercise exercise : exerciseList) {
+            files.writeToFile(EXERCISE_PATH, exercise);
+        }
+    }
+
+    public void modifyExerciseSecondaryMuscles(String name, String[] newMuscles) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        if (!result.isPresent()) {
+            System.out.println("No such exercise.");
+            return;
+        }
+        Exercise exerciseToModify = result.get();
+        exerciseToModify.secondaryMuscles = new ArrayList<>(Arrays.asList(newMuscles));
+        files.clearFile(EXERCISE_PATH);
+        for (Exercise exercise : exerciseList) {
+            files.writeToFile(EXERCISE_PATH, exercise);
+        }
+    }
+
+    public void modifyExerciseType(String name, String newType) {
+        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        if (!result.isPresent()) {
+            System.out.println("No such exercise.");
+            return;
+        }
+        Exercise exerciseToModify = result.get();
+        exerciseToModify.type = newType;
+        files.clearFile(EXERCISE_PATH);
+        for (Exercise exercise : exerciseList) {
+            files.writeToFile(EXERCISE_PATH, exercise);
+        }
     }
 }
