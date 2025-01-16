@@ -22,7 +22,8 @@ public class Data {
     }
 
     public void addExercise(Exercise newExercise) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(newExercise.name)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(newExercise.name)).findAny();
         if (result.isPresent()) {
             System.out.println("Exercise with given name already exists.");
             return;
@@ -32,8 +33,9 @@ public class Data {
     }
 
     public void addSet(Set newSet) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(newSet.exercise)).findAny();
-        if (result.isPresent()) {
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(newSet.exercise)).findAny();
+        if (!result.isPresent()) {
             System.out.println("No exercise with given name.");
             return;
         }
@@ -54,7 +56,8 @@ public class Data {
     }
 
     public void printExercise(String name) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(name)).findAny();
         if (!result.isPresent()) {
             System.out.println("No such exercise.");
             return;
@@ -122,7 +125,8 @@ public class Data {
     }
 
     public void modifyExerciseName(String oldName, String newName) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(oldName)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(oldName)).findAny();
         if (!result.isPresent()) {
             System.out.println("No such exercise.");
             return;
@@ -145,7 +149,8 @@ public class Data {
     }
 
     public void modifyExercisePrimaryMuscles(String name, String[] newMuscles) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(name)).findAny();
         if (!result.isPresent()) {
             System.out.println("No such exercise.");
             return;
@@ -159,7 +164,8 @@ public class Data {
     }
 
     public void modifyExerciseSecondaryMuscles(String name, String[] newMuscles) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(name)).findAny();
         if (!result.isPresent()) {
             System.out.println("No such exercise.");
             return;
@@ -173,7 +179,8 @@ public class Data {
     }
 
     public void modifyExerciseType(String name, String newType) {
-        Optional<Exercise> result = exerciseList.stream().filter(e -> e.name.equals(name)).findAny();
+        Optional<Exercise> result = exerciseList.stream()
+            .filter(e -> e.name.equals(name)).findAny();
         if (!result.isPresent()) {
             System.out.println("No such exercise.");
             return;

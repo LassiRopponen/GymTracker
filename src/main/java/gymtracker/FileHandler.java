@@ -2,6 +2,7 @@ package gymtracker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -50,6 +51,9 @@ public class FileHandler {
 
                 line = reader.readLine();
             }
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("No previous tracking data found.");
         }
         catch(Exception e) {
             System.err.println("Unable to read file: " + e);

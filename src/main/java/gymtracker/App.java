@@ -10,8 +10,8 @@ import java.util.Arrays;
 public class App {
     private final static String[] EXERCISE_PROMPTS = {
         "name: ",
-        "primary muscles: ",
-        "secondary muscles: ",
+        "primary muscles (muscle 1, muscle 2, ...): ",
+        "secondary muscles (muscle 1, muscle 2, ...): ",
         "type: "
     };
     private final static String[] SET_PROMPTS = {
@@ -25,106 +25,38 @@ public class App {
         Data data = new Data();
 
         try(Scanner inputReader = new Scanner(System.in)) {
-            while (true) {
+            boolean appIsOn = true;
+            while (appIsOn) {
                 String[] input = inputReader.nextLine().split(" ");
 
-                if (input.length > 0 && input[0].equals("quit")) {
-                    break;
+                if (input.length == 0) {
+                    continue;
                 }
-                else if (input.length >= 2 && input[0].equals("add")) {
-                    if (input[1].equals("exercise")) {
-                        String rawExercise = "";
-                        if (input.length > 2) {
-                            rawExercise = String.join(" ", Arrays.copyOfRange(input, 2, input.length));   
-                        }
-                        else {
-                            rawExercise = saveInput(inputReader, EXERCISE_PROMPTS);
-                        }
-                        Exercise newExercise = exerciseFromInput(rawExercise);
-                        if (newExercise != null) {
-                            data.addExercise(exerciseFromInput(rawExercise));
-                        }
-                    }
-                    else if (input[1].equals("set")) {
-                        String rawSet = "";
-                        if (input.length > 2) {
-                            rawSet = String.join(" ", Arrays.copyOfRange(input, 2, input.length));
-                        }
-                        else {
-                            rawSet = saveInput(inputReader, SET_PROMPTS);
-                        }
-                        Set newSet = setFromInput(rawSet);
-                        if (newSet != null) {
-                            data.addSet(setFromInput(rawSet));
-                        }   
-                    }
-                }
-                else if (input.length >= 2 && input[0].equals("print")) {
-                    if (input.length == 2) {
-                        if (input[1].equals("exercises")) {
-                            data.printAllExercises();
-                        }
-                        else if (input[1].equals("sets")) {
-                            data.printAllSets();
-                        }
-                    }
-                    else if (input.length >= 3 && input[1].equals("exercise")) {
-                        data.printExercise(String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
-                    }
-                    else if (input.length == 4 && input[1].equals("sets") && input[2].equals("date")) {
-                        data.printSetsForDate(input[3]);
-                    }
-                }
-                else if (input.length == 2 && input[0].equals("clear")) {
-                    if (input[1].equals("exercises")) {
-                        data.clearExercises();
-                    }
-                    else if (input[1].equals("sets")) {
-                        data.clearSets();
-                    }
-                }
-                else if (input.length >= 2 && input[0].equals("delete")) {
-                    if (input.length >= 3 && input[1].equals("exercise")) {
-                        data.deleteExercise(String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
-                    }
-                    else if (input.length == 2 && input[1].equals("set")) {
-                        data.deleteLastSet();
-                    }
-                }
-                else if (input.length == 3 && input[0].equals("modify")) {
-                    if (input[1].equals("exercise")) {
-                        if (input[2].equals("name")) {
-                            System.out.print("Exercise to modify: ");
-                            String oldExercise = inputReader.nextLine();
-                            System.out.print("New name: ");
-                            String newName = inputReader.nextLine();
-                            data.modifyExerciseName(oldExercise, newName);
-                        }
-                        else if (input[2].equals("primary")) {
-                            System.out.print("Exercise to modify: ");
-                            String oldExercise = inputReader.nextLine();
-                            System.out.print("New muscles: ");
-                            String[] newMuscles = inputReader.nextLine().split(", ");
-                            data.modifyExercisePrimaryMuscles(oldExercise, newMuscles);
-                        }
-                        else if (input[2].equals("secondary")) {
-                            System.out.print("Exercise to modify: ");
-                            String oldExercise = inputReader.nextLine();
-                            System.out.print("New muscles: ");
-                            String[] newMuscles = inputReader.nextLine().split(", ");
-                            data.modifyExerciseSecondaryMuscles(oldExercise, newMuscles);
-                        }
-                        else if (input[2].equals("type")) {
-                            System.out.print("Exercise to modify: ");
-                            String oldExercise = inputReader.nextLine();
-                            System.out.print("New type: ");
-                            String newType = inputReader.nextLine();
-                            data.modifyExerciseType(oldExercise, newType);
-                        }
-                    }
-                }
-                else {
-                    System.out.println("Incorrect command.");
+
+                String operation = input[0];
+                String[] tailOfInput = Arrays.copyOfRange(input, 1, input.length);
+
+                switch(operation) {
+                    case("quit"):
+                        appIsOn = false;
+                        break;
+                    case("add"):
+                        addFromInput(tailOfInput, inputReader, data);
+                        break;
+                    case("print"):
+                        printFromInput(tailOfInput, data);
+                        break;
+                    case("clear"):
+                        clearFromInput(tailOfInput, data);
+                        break;
+                    case("delete"):
+                        deleteFromInput(tailOfInput, data);
+                        break;
+                    case("modify"):
+                        modifyFromInput(tailOfInput, inputReader, data);
+                        break;
+                    default:
+                        System.out.println("Incorrect command.");
                 }
             }
         }
@@ -169,5 +101,166 @@ public class App {
             System.out.println("Incorrect format for set.");
             return null;
         }   
+    }
+
+    private static void addFromInput(String[] input, Scanner inputReader, Data data) {
+        if (input.length == 0) {
+            System.out.println("Too few arguments for add operation.");
+            return;
+        }
+        if (!input[0].equals("exercise") && !input[0].equals("set")) {
+            System.out.println("Add is only possible for exercise or set.");
+            return;
+        }
+        String rawInput = "";
+        if (input.length > 1) {
+            rawInput = String.join(" ", Arrays.copyOfRange(input, 1, input.length));   
+        }
+        if (input[0].equals("exercise")) {
+            if (rawInput.isEmpty()) {
+                rawInput = saveInput(inputReader, EXERCISE_PROMPTS);
+            }
+            Exercise newExercise = exerciseFromInput(rawInput);
+            if (newExercise != null) {
+                data.addExercise(newExercise);
+                System.out.println("Exercise added succefully");
+            }
+        }
+        else if (input[0].equals("set")) {
+            if (rawInput.isEmpty()) {
+                rawInput = saveInput(inputReader, SET_PROMPTS);
+            }
+            Set newSet = setFromInput(rawInput);
+            if (newSet != null) {
+                data.addSet(newSet);
+                System.out.println("Set added succesfully.");
+            }   
+        }
+    }
+
+    private static void printFromInput(String[] input, Data data) {
+        if (input.length == 0) {
+            System.out.println("Too few arguments for print operation.");
+        }
+        else if (input[0].equals("exercises")) {
+            if (input.length == 1) {
+                data.printAllExercises();
+            }
+            else if (input.length >= 2) {
+                data.printExercise(String.join(" ", Arrays.copyOfRange(input, 1, input.length)));
+            }
+        }
+        else if (input[0].equals("sets")) {
+            if (input.length == 1) {
+                data.printAllSets();
+            }
+            else if (input[1].equals("date")) {
+                if (input.length == 3) {
+                    data.printSetsForDate(input[2]);
+                }
+                else if (input.length == 2) {
+                    System.out.println("Please specify a date.");
+                }
+                else {
+                    System.out.println("Date should be a single argument.");
+                }
+            }
+            else {
+                System.out.println("Incorrect format for print sets operation.");
+            }
+        }
+        else {
+            System.out.println("Print is only possible for exercises or sets.");
+        }
+    }
+
+    private static void clearFromInput(String[] input, Data data) {
+        if (input.length == 0) {
+            System.out.println("Too few arguments for clear operation.");
+        }
+        else if (input.length > 1) {
+            System.out.println("Too many arguments for clear operation.");
+        }
+        else if (input[0].equals("exercises")) {
+            data.clearExercises();
+        }
+        else if (input[0].equals("sets")) {
+            data.clearSets();
+        }
+        else {
+            System.out.println("Clear is only possible for exercises or sets.");
+        }
+    }
+
+    private static void deleteFromInput(String[] input, Data data) {
+        if (input.length == 0) {
+            System.out.println("Too few arguments for delete operation.");
+        }
+        else if (input[0].equals("exercise")) {
+            if (input.length >= 2) {
+                data.deleteExercise(String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+            }
+            else {
+                System.out.println("Too few arguments for delete exercise operation.");
+            }
+        }
+        else if (input[0].equals("set")) {
+            if (input.length == 1) {
+                data.deleteLastSet();
+            }
+            else {
+                System.out.println("Too many arguments for delete set operation.");
+            }
+        }
+        else {
+            System.out.println("Delete is only possible for exercise or set");
+        }
+    }
+
+    private static void modifyFromInput(String[] input, Scanner inputReader, Data data) {
+        if (input.length < 2) {
+            System.out.println("Too few arguments for modify operation.");
+        }
+        else if (input.length > 2) {
+            System.out.println("Too many arguments for modify operation.");
+        }
+        else if (input[0].equals("exercise")) {
+            if (input[1].equals("name")) {
+                System.out.print("Exercise to modify: ");
+                String oldExercise = inputReader.nextLine();
+                System.out.print("New name: ");
+                String newName = inputReader.nextLine();
+                data.modifyExerciseName(oldExercise, newName);
+            }
+            else if (input[1].equals("primary")) {
+                System.out.print("Exercise to modify: ");
+                String oldExercise = inputReader.nextLine();
+                System.out.print("New muscles: ");
+                String[] newMuscles = inputReader.nextLine().split(", ");
+                data.modifyExercisePrimaryMuscles(oldExercise, newMuscles);
+            }
+            else if (input[1].equals("secondary")) {
+                System.out.print("Exercise to modify: ");
+                String oldExercise = inputReader.nextLine();
+                System.out.print("New muscles: ");
+                String[] newMuscles = inputReader.nextLine().split(", ");
+                data.modifyExerciseSecondaryMuscles(oldExercise, newMuscles);
+            }
+            else if (input[1].equals("type")) {
+                System.out.print("Exercise to modify: ");
+                String oldExercise = inputReader.nextLine();
+                System.out.print("New type: ");
+                String newType = inputReader.nextLine();
+                data.modifyExerciseType(oldExercise, newType);
+            }
+            else {
+                System.out.println(
+                    "possible arguments for modify exercise are name, primary, secondary and type."
+                );
+            }
+        }
+        else {
+            System.out.println("Modify is only possible for exercise.");
+        }
     }
 }
