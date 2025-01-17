@@ -21,35 +21,43 @@ public class Data {
         this.setList = files.parseFile(SET_PATH, Set.class);
     }
 
-    public void addExercise(Exercise newExercise) {
+    public boolean addExercise(Exercise newExercise) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(newExercise.name)).findAny();
         if (result.isPresent()) {
             System.out.println("Exercise with given name already exists.");
-            return;
+            return false;
         }
         exerciseList.add(newExercise);
-        files.writeToFile(EXERCISE_PATH, newExercise);
+        return files.writeToFile(EXERCISE_PATH, newExercise);
     }
 
-    public void addSet(Set newSet) {
+    public boolean addSet(Set newSet) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(newSet.exercise)).findAny();
         if (!result.isPresent()) {
             System.out.println("No exercise with given name.");
-            return;
+            return false;
         }
         setList.add(newSet);
-        files.writeToFile(SET_PATH, newSet);
+        return files.writeToFile(SET_PATH, newSet);
     }
 
     public void printAllExercises() {
+        if (exerciseList.isEmpty()) {
+            System.out.println("No exercises to print.");
+            return;
+        }
         for (Exercise exercise : exerciseList) {
             System.out.println(exercise);
         }
     }
 
     public void printAllSets() {
+        if (setList.isEmpty()) {
+            System.out.println("No sets to print.");
+            return;
+        }
         for (Set set : setList) {
             System.out.println(set);
         }
@@ -90,38 +98,36 @@ public class Data {
         }
     }
 
-    public void deleteExercise(String name) {
+    public boolean deleteExercise(String name) {
         Boolean wasDeleted = exerciseList.removeIf(e -> e.name.equals(name));
         if (!wasDeleted) {
             System.out.println("No such exercise.");
-            return;
+            return false;
         }
-        files.clearFile(EXERCISE_PATH);
-        for (Exercise exercise : exerciseList) {
-            files.writeToFile(EXERCISE_PATH, exercise);
-        }
+        return rewriteExercises();
     }
 
-    public void deleteLastSet() {
+    public boolean deleteLastSet() {
         if (setList.isEmpty()) {
             System.out.println("No sets to delete.");
-            return;
+            return false;
         }
         setList.remove(setList.size()-1);
-        files.clearFile(SET_PATH);
-        for (Set set : setList) {
-            files.writeToFile(SET_PATH, set);
-        }
+        return rewriteSets();
     }
 
     public void clearExercises() {
         exerciseList.clear();
-        files.clearFile(EXERCISE_PATH);
+        if (!files.clearFile(EXERCISE_PATH)) {
+            System.out.println("Unable to clear file.");
+        }
     }
 
     public void clearSets() {
         setList.clear();
-        files.clearFile(SET_PATH);
+        if (!files.clearFile(SET_PATH)) {
+            System.out.println("Unable to clear file.");
+        }
     }
 
     public void modifyExerciseName(String oldName, String newName) {
@@ -138,13 +144,17 @@ public class Data {
                 set.exercise = newName;
             }
         }
-        files.clearFile(EXERCISE_PATH);
-        files.clearFile(SET_PATH);
-        for (Exercise exercise : exerciseList) {
-            files.writeToFile(EXERCISE_PATH, exercise);
+        if (rewriteExercises()) {
+            System.out.println("Modifying exercise succesful.");
         }
-        for (Set set : setList) {
-            files.writeToFile(SET_PATH, set);
+        else {
+            System.out.println("Modifying exercises failed.");
+        }
+        if (rewriteSets()) {
+            System.out.println("Modifying sets succesful.");
+        }
+        else {
+            System.out.println("Modifying sets failed.");
         }
     }
 
@@ -157,9 +167,11 @@ public class Data {
         }
         Exercise exerciseToModify = result.get();
         exerciseToModify.primaryMuscles = new ArrayList<>(Arrays.asList(newMuscles));
-        files.clearFile(EXERCISE_PATH);
-        for (Exercise exercise : exerciseList) {
-            files.writeToFile(EXERCISE_PATH, exercise);
+        if (rewriteExercises()) {
+            System.out.println("Modifying exercise succesful.");
+        }
+        else {
+            System.out.println("Modifying exercise failed.");
         }
     }
 
@@ -172,9 +184,11 @@ public class Data {
         }
         Exercise exerciseToModify = result.get();
         exerciseToModify.secondaryMuscles = new ArrayList<>(Arrays.asList(newMuscles));
-        files.clearFile(EXERCISE_PATH);
-        for (Exercise exercise : exerciseList) {
-            files.writeToFile(EXERCISE_PATH, exercise);
+        if (rewriteExercises()) {
+            System.out.println("Modifying exercise succesful.");
+        }
+        else {
+            System.out.println("Modifying exercise failed.");
         }
     }
 
@@ -187,9 +201,45 @@ public class Data {
         }
         Exercise exerciseToModify = result.get();
         exerciseToModify.type = newType;
-        files.clearFile(EXERCISE_PATH);
-        for (Exercise exercise : exerciseList) {
-            files.writeToFile(EXERCISE_PATH, exercise);
+        if (rewriteExercises()) {
+            System.out.println("Modifying exercise succesful.");
         }
+        else {
+            System.out.println("Modifying exercise failed.");
+        }
+    }
+
+    private boolean rewriteExercises() {
+        if (!files.clearFile(EXERCISE_PATH)) {
+            System.out.println("Unable to clear file.");
+            return false;
+        }
+        int failureCount = 0;
+        for (Exercise exercise : exerciseList) {
+            if (!files.writeToFile(EXERCISE_PATH, exercise)) {
+                failureCount++;
+            }
+        }
+        if (failureCount > 0) {
+            System.out.println(failureCount + " exercises lost during operation.");
+        }
+        return true;
+    }
+
+    private boolean rewriteSets() {
+        if (!files.clearFile(SET_PATH)) {
+            System.out.println("Unable to clear file.");
+            return false;
+        }
+        int failureCount = 0;
+        for (Set set : setList) {
+            if (!files.writeToFile(SET_PATH, set)) {
+                failureCount++;
+            }
+        }
+        if (failureCount > 0) {
+            System.out.println(failureCount + " sets lost during operation.");
+        }
+        return true;
     }
 }

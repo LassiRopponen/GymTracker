@@ -122,8 +122,12 @@ public class App {
             }
             Exercise newExercise = exerciseFromInput(rawInput);
             if (newExercise != null) {
-                data.addExercise(newExercise);
-                System.out.println("Exercise added succefully");
+                if (data.addExercise(newExercise)) {
+                    System.out.println("Exercise added succefully");
+                }
+                else {
+                    System.out.println("Failed to add exercise.");
+                }
             }
         }
         else if (input[0].equals("set")) {
@@ -132,8 +136,12 @@ public class App {
             }
             Set newSet = setFromInput(rawInput);
             if (newSet != null) {
-                data.addSet(newSet);
-                System.out.println("Set added succesfully.");
+                if (data.addSet(newSet)) {
+                    System.out.println("Set added succesfully.");
+                }
+                else {
+                    System.out.println("failed to add set.");
+                }
             }   
         }
     }
@@ -198,7 +206,14 @@ public class App {
         }
         else if (input[0].equals("exercise")) {
             if (input.length >= 2) {
-                data.deleteExercise(String.join(" ", Arrays.copyOfRange(input, 2, input.length)));
+                if (data.deleteExercise(
+                    String.join(" ", Arrays.copyOfRange(input, 2, input.length)))
+                ) {
+                    System.out.println("Exercise deleted succesfully.");
+                }
+                else {
+                    System.out.println("Failed to delete exercise.");
+                }
             }
             else {
                 System.out.println("Too few arguments for delete exercise operation.");
@@ -206,7 +221,12 @@ public class App {
         }
         else if (input[0].equals("set")) {
             if (input.length == 1) {
-                data.deleteLastSet();
+                if (data.deleteLastSet()) {
+                    System.out.println("Set deleted succesfully.");
+                }
+                else {
+                    System.out.println("Failed to delete set.");
+                }
             }
             else {
                 System.out.println("Too many arguments for delete set operation.");

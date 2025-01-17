@@ -2,6 +2,7 @@ package gymtracker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -55,6 +56,10 @@ public class FileHandler {
         catch (FileNotFoundException e) {
             System.out.println("No previous tracking data found.");
         }
+        catch (NumberFormatException e) {
+            System.err.println(
+                "Incorrect format for number in file. Unable to read tracking data.");
+        }
         catch(Exception e) {
             System.err.println("Unable to read file: " + e);
         }
@@ -62,7 +67,7 @@ public class FileHandler {
         return parsedObjects;
     }
 
-    public <T> void writeToFile(String fileName, T objectToBeWritten) {
+    public <T> boolean writeToFile(String fileName, T objectToBeWritten) {
         Field[] attributes = objectToBeWritten.getClass().getFields();
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
             for (Field attribute : attributes) {
@@ -83,16 +88,25 @@ public class FileHandler {
             }
             writer.write("end");
             writer.newLine();
+            return true;
         }
         catch(Exception e) {
             System.err.println("Unable to write to file: " + e);
+            return false;
         }
     }
 
-    public void clearFile(String fileName) {
-        try (PrintWriter clearer = new PrintWriter(fileName)) {}
+    public boolean clearFile(String fileName) {
+        try (PrintWriter clearer = new PrintWriter(fileName)) {
+            return true;
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("No file found.");
+            return false;
+        }
         catch (Exception e) {
             System.err.println("Unable to clear file: " + e);
+            return false;
         }
     }
 
