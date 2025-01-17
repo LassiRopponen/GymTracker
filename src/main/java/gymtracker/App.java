@@ -20,11 +20,33 @@ public class App {
         "weight: ",
         "reps: "
     };
+    private final static String[] COMMANDS = {
+        "add exercise: add exercise with prompts",
+        "add exercise <name>;<primary muscles>;<secondary muscles>;<type>: add exercise without prompts",
+        "add set: add set with prompts",
+        "add set: <date>;<exercise>;<weight>;<reps>: add sets without prompts",
+        "print exercises: print all exercises",
+        "print exercises <name>: print one exercise",
+        "print sets: print all sets",
+        "print sets date <date>: print sets for date",
+        "clear exercises: clear all exercises",
+        "clear sets: clear all sets",
+        "delete exercise <name>: delete exercise with given name",
+        "delete set: delete set that was added last",
+        "modify exercise name: modify exercise name with prompts",
+        "modify exercise primary: modify exercise primary muscles with prompts",
+        "modify exercise secondary: modify exercise secondary muscles with prompts",
+        "modify exercise type: modify exercise type with prompts",
+        "quit: exit the program",
+        "help: see these instructions"
+    };
 
     public static void main(String[] args) {
         Data data = new Data();
 
         try(Scanner inputReader = new Scanner(System.in)) {
+            System.out.println("Welcome to GymTracker. Type \"help\" to see commands.");
+
             boolean appIsOn = true;
             while (appIsOn) {
                 String[] input = inputReader.nextLine().split(" ");
@@ -54,6 +76,11 @@ public class App {
                         break;
                     case("modify"):
                         modifyFromInput(tailOfInput, inputReader, data);
+                        break;
+                    case("help"):
+                        for (String command : COMMANDS) {
+                            System.out.println(command);
+                        }
                         break;
                     default:
                         System.out.println("Incorrect command.");
