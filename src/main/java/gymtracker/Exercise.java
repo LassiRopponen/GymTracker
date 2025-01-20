@@ -2,6 +2,9 @@ package gymtracker;
 
 import java.util.ArrayList;
 
+/**
+ * Class for storing exercise information as an object
+ */
 public class Exercise {
     public String name;
     public ArrayList<String> primaryMuscles;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * GymTracker
+ * Class for handling user inputs
  */
 public class App {
     private final static String[] EXERCISE_PROMPTS = {
@@ -89,6 +89,12 @@ public class App {
         }
     }
 
+    /**
+     * Gives prompts to the user and stores the input in a string
+     * @param reader: for reading inputs
+     * @param prompts: prompts to give the user
+     * @return string of inputs
+     */
     private static String saveInput(Scanner reader, String[] prompts) {
         String input = "";
         for (String prompt : prompts) {
@@ -98,6 +104,11 @@ public class App {
         return input;
     }
 
+    /**
+     * creates an exercise object from string format
+     * @param input: exercise input as a string
+     * @return the created exercise object
+     */
     private static Exercise exerciseFromInput(String input) {
         try {
             String[] attributes = input.split(";");
@@ -114,6 +125,11 @@ public class App {
         }
     }
 
+    /**
+     * creates a set object from string format
+     * @param input: set input as a string
+     * @return the created set object
+     */
     private static Set setFromInput(String input) {
         try {
             String[] attributes = input.split(";");
@@ -130,6 +146,12 @@ public class App {
         }   
     }
 
+    /**
+     * Handles commands starting with "add"
+     * @param input: command split by spaces
+     * @param inputReader: for reading inputs
+     * @param data: for adding new objects to database
+     */
     private static void addFromInput(String[] input, Scanner inputReader, Data data) {
         if (input.length == 0) {
             System.out.println("Too few arguments for add operation.");
@@ -173,6 +195,11 @@ public class App {
         }
     }
 
+    /**
+     * handles commands starting with "print"
+     * @param input: command split by spaces
+     * @param data: for accessing database
+     */
     private static void printFromInput(String[] input, Data data) {
         if (input.length == 0) {
             System.out.println("Too few arguments for print operation.");
@@ -209,6 +236,11 @@ public class App {
         }
     }
 
+    /**
+     * handles commands starting with "clear"
+     * @param input: command split by spaces
+     * @param data: for accessing database
+     */
     private static void clearFromInput(String[] input, Data data) {
         if (input.length == 0) {
             System.out.println("Too few arguments for clear operation.");
@@ -227,6 +259,11 @@ public class App {
         }
     }
 
+    /**
+     * handles commands starting with "delete"
+     * @param input: commands split by spaces
+     * @param data: for accessing database
+     */
     private static void deleteFromInput(String[] input, Data data) {
         if (input.length == 0) {
             System.out.println("Too few arguments for delete operation.");
@@ -264,6 +301,12 @@ public class App {
         }
     }
 
+    /**
+     * handles commands starting with "modify"
+     * @param input: command split by spaces
+     * @param inputReader: for reading input
+     * @param data: for accessing database
+     */
     private static void modifyFromInput(String[] input, Scanner inputReader, Data data) {
         if (input.length < 2) {
             System.out.println("Too few arguments for modify operation.");

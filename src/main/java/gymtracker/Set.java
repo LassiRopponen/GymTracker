@@ -1,5 +1,8 @@
 package gymtracker;
 
+/**
+ * Class for storing set information as an object
+ */
 public class Set {
     public String date;
     public String exercise;

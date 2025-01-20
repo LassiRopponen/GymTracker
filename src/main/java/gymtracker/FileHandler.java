@@ -2,7 +2,6 @@ package gymtracker;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,7 +12,17 @@ import java.util.List;
 import java.util.Locale;
 import java.io.PrintWriter;
 
+/**
+ * Class for handling file operations
+ */
 public class FileHandler {
+    /**
+     * parses the saved data from a file into a list of objects
+     * @param <T>: type of the list's objects
+     * @param fileName: path to the file
+     * @param classForParsing: the type of the lists objects
+     * @return the parsed list of objects
+     */
     public <T> ArrayList<T> parseFile(String fileName, Class<T> classForParsing) {
         ArrayList<T> parsedObjects = new ArrayList<>();
 
@@ -67,6 +76,13 @@ public class FileHandler {
         return parsedObjects;
     }
 
+    /**
+     * writes an object's information to a file
+     * @param <T>: the type of the object to be written
+     * @param fileName: the path to the file
+     * @param objectToBeWritten: the object to be written to the file
+     * @return whether the operation succeeded
+     */
     public <T> boolean writeToFile(String fileName, T objectToBeWritten) {
         Field[] attributes = objectToBeWritten.getClass().getFields();
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
@@ -96,6 +112,11 @@ public class FileHandler {
         }
     }
 
+    /**
+     * completely empties a file's contents
+     * @param fileName: the path to the file
+     * @return whether the operation succeeded
+     */
     public boolean clearFile(String fileName) {
         try (PrintWriter clearer = new PrintWriter(fileName)) {
             return true;
@@ -110,6 +131,14 @@ public class FileHandler {
         }
     }
 
+    /**
+     * parses a objects from string format
+     * @param <T>: the type of the object to be returned
+     * @param values: the string to be parsed
+     * @param type: the type of the object to be returned
+     * @return list of parsed objects
+     * @throws NumberFormatException, if values for number fields cannot be parsed as numbers
+     */
     private <T> ArrayList<T> parseValues(String values, Class<T> type) throws NumberFormatException {
         String[] valueArray = values.split(",");
         ArrayList<T> result = new ArrayList<>();
@@ -128,6 +157,12 @@ public class FileHandler {
         return result;
     }
 
+    /**
+     * returns the value as string in appripriate format for writing to file
+     * @param <T>: type of the value 
+     * @param value: the value to be formatted
+     * @return value as string in correct format
+     */
     private <T> String setUpForWriting(T value) {
         if (value.getClass() == Integer.class) {
             return String.valueOf(value);

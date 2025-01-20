@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Class for data storage and logic
+ */
 public class Data {
     private final String EXERCISE_PATH = "src/main/resources/exercises.txt";
     private final String SET_PATH = "src/main/resources/sets.txt";
@@ -14,6 +17,9 @@ public class Data {
     private ArrayList<Exercise> exerciseList;
     private ArrayList<Set> setList;
 
+    /** 
+     * Constructor that reads saved data from files
+     */
     public Data() {
         this.files = new FileHandler();
 
@@ -21,6 +27,11 @@ public class Data {
         this.setList = files.parseFile(SET_PATH, Set.class);
     }
 
+    /**
+     * adds a new exercise to the database and writes its information to a file
+     * @param newExercise: the exercise to be added
+     * @return whether the operation succeeded
+     */
     public boolean addExercise(Exercise newExercise) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(newExercise.name)).findAny();
@@ -32,6 +43,11 @@ public class Data {
         return files.writeToFile(EXERCISE_PATH, newExercise);
     }
 
+    /**
+     * adds a new set to the database and writes its information to a file
+     * @param newSet: the set to be added
+     * @return whether the operation succeeded
+     */
     public boolean addSet(Set newSet) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(newSet.exercise)).findAny();
@@ -43,6 +59,9 @@ public class Data {
         return files.writeToFile(SET_PATH, newSet);
     }
 
+    /**
+     * prints the name of every saved exercise
+     */
     public void printAllExercises() {
         if (exerciseList.isEmpty()) {
             System.out.println("No exercises to print.");
@@ -53,6 +72,9 @@ public class Data {
         }
     }
 
+    /**
+     * prints the exercise and date of every set
+     */
     public void printAllSets() {
         if (setList.isEmpty()) {
             System.out.println("No sets to print.");
@@ -63,6 +85,10 @@ public class Data {
         }
     }
 
+    /**
+     * prints all the information for an exercise with given name
+     * @param name: the name of the exercise to be printed
+     */
     public void printExercise(String name) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(name)).findAny();
@@ -81,6 +107,10 @@ public class Data {
         System.out.println("type: " + exerciseToPrint.type);
     }
 
+    /**
+     * prints all the sets for a given date
+     * @param date: the date of the sets to be printed
+     */
     public void printSetsForDate(String date) {
         ArrayList<Set> setsToPrint = new ArrayList<>(
             setList.stream().filter(s -> s.date.equals(date)).collect(Collectors.toList()));
@@ -98,6 +128,11 @@ public class Data {
         }
     }
 
+    /**
+     * deletes an exercise with given name
+     * @param name: the name of the exercise to be deleted
+     * @return whether the operation succeeded
+     */
     public boolean deleteExercise(String name) {
         Boolean wasDeleted = exerciseList.removeIf(e -> e.name.equals(name));
         if (!wasDeleted) {
@@ -107,6 +142,10 @@ public class Data {
         return rewriteExercises();
     }
 
+    /**
+     * deletes the set that was last added to the database
+     * @return whether the operation succeeded
+     */
     public boolean deleteLastSet() {
         if (setList.isEmpty()) {
             System.out.println("No sets to delete.");
@@ -116,6 +155,9 @@ public class Data {
         return rewriteSets();
     }
 
+    /**
+     * clears all exercises from the database
+     */
     public void clearExercises() {
         exerciseList.clear();
         if (!files.clearFile(EXERCISE_PATH)) {
@@ -123,6 +165,9 @@ public class Data {
         }
     }
 
+    /**
+     * clears all sets from the database
+     */
     public void clearSets() {
         setList.clear();
         if (!files.clearFile(SET_PATH)) {
@@ -130,6 +175,11 @@ public class Data {
         }
     }
 
+    /**
+     * modifies the name of an exercise with given name
+     * @param oldName: the old name of the exercise to be modified
+     * @param newName: the new name of the exercise
+     */
     public void modifyExerciseName(String oldName, String newName) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(oldName)).findAny();
@@ -158,6 +208,11 @@ public class Data {
         }
     }
 
+    /**
+     * modifies the list of primary muscles of an exercise with given name
+     * @param name: the name of the exercise to be modified
+     * @param newMuscles: the new list of primary muscles
+     */
     public void modifyExercisePrimaryMuscles(String name, String[] newMuscles) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(name)).findAny();
@@ -175,6 +230,11 @@ public class Data {
         }
     }
 
+    /**
+     * modifies the list of secondary muscles of an exercise with given name
+     * @param name: the name of the exercise to be modified
+     * @param newMuscles: the new list of secondary muscles
+     */
     public void modifyExerciseSecondaryMuscles(String name, String[] newMuscles) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(name)).findAny();
@@ -192,6 +252,11 @@ public class Data {
         }
     }
 
+    /**
+     * modifies the type of an exercise with given name
+     * @param name: the name of the exercise to be modified
+     * @param newType: the new type of the exercise
+     */
     public void modifyExerciseType(String name, String newType) {
         Optional<Exercise> result = exerciseList.stream()
             .filter(e -> e.name.equals(name)).findAny();
@@ -209,6 +274,10 @@ public class Data {
         }
     }
 
+    /**
+     * rewrites the database file based on the current state of the database
+     * @return whether the operation succeeded
+     */
     private boolean rewriteExercises() {
         if (!files.clearFile(EXERCISE_PATH)) {
             System.out.println("Unable to clear file.");
@@ -226,6 +295,10 @@ public class Data {
         return true;
     }
 
+    /**
+     * rewrites the database file based on the current state of the database
+     * @return whether the operation succeeded
+     */
     private boolean rewriteSets() {
         if (!files.clearFile(SET_PATH)) {
             System.out.println("Unable to clear file.");
