@@ -64,7 +64,7 @@ public class FileHandler {
         }
         catch (FileNotFoundException e) {
             System.out.println(
-                "No previous tracking data found for type " + classForParsing.getName() + ".");
+                "No previous tracking data found for type " + classForParsing.getSimpleName() + ".");
         }
         catch (NumberFormatException e) {
             System.err.println(
